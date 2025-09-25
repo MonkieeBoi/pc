@@ -1,0 +1,9 @@
+@import "colour.css";
+
+* {
+    color: var(--text);
+}
+
+body {
+    background-color: var(--bg);
+}
