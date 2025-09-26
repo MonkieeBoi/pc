@@ -20,5 +20,6 @@
     /* Vars */
     --bg: var(--nord00);
     --text: white;
+    --border: var(--nord05);
 }
 
