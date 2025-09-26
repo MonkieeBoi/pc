@@ -1,9 +1,27 @@
 @import "colour.css";
 
 * {
-    color: var(--text);
+  color: var(--text);
 }
 
 body {
-    background-color: var(--bg);
+  background-color: var(--bg);
 }
+
+#game {
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+}
+
+#board {
+  border: 1px var(--border) solid;
+}
+
+#queue {
+}
+
+#hold {
+}
+
