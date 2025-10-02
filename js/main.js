@@ -56,7 +56,7 @@ function draw_board(context, board) {
     context.setTransform(transform);
 
     // Minos
-    for (let y = 0; y < board.cells.length; y++) {
+    for (let y = 0; y < Math.min(board.cells.length, BOARD_HEIGHT); y++) {
         for (let x = 0; x < BOARD_WIDTH; x++) {
             if (board.cells[y][x] !== 0) {
                 context.fillStyle = get_color(board.cells[y][x]);
