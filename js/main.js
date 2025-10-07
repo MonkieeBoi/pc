@@ -32,10 +32,26 @@ function main() {
 
 function draw_game(context, game) {
     draw_board(context, game.board);
+    draw_piece(
+        context,
+        game.active.type,
+        game.active.x,
+        game.active.y,
+        game.active.rotation,
+    );
+    // Ghost
+    draw_piece(
+        context,
+        game.active.type,
+        game.active.x,
+        game.get_ghost_y(),
+        game.active.rotation,
+        "4D"
+    );
 }
 
 function draw_board(context, board) {
-    context.fillStyle = get_color(0);
+    context.fillStyle = get_colour(0);
     context.fillRect(0, 0, BOARD_WIDTH, BOARD_HEIGHT);
 
     // Grid
@@ -59,7 +75,7 @@ function draw_board(context, board) {
     for (let y = 0; y < Math.min(board.cells.length, BOARD_HEIGHT); y++) {
         for (let x = 0; x < BOARD_WIDTH; x++) {
             if (board.cells[y][x] !== 0) {
-                context.fillStyle = get_color(board.cells[y][x]);
+                context.fillStyle = get_colour(board.cells[y][x]);
                 context.fillRect(x, y, 1, 1);
             }
         }
@@ -67,10 +83,32 @@ function draw_board(context, board) {
 }
 
 function draw_queue(context, queue) {
+    context.fillStyle = get_colour(0);
+    context.fillRect(0, 0, 4, 14);
+    let preview = queue.preview();
+    for (let i = 0; i < 5; i++) {
+        draw_piece(context, preview[i], 1, 12 - 3 * i, 0);
+    }
 }
 
 function draw_hold(context, hold) {
+    context.fillStyle = get_colour(0);
+    context.fillRect(0, 0, 4, 2);
+
+    if (!get_piece_name(hold)) {
+        return;
+    }
+
+    context.fillStyle = get_colour(hold);
+    draw_piece(context, hold, 1, 0, 0);
 }
 
-function draw_piece(context, piece) {
+function draw_piece(context, piece, x, y, rotation, opacity) {
+    if (opacity === undefined) {
+        opacity = "";
+    }
+    for (let [off_x, off_y] of get_offsets(piece, rotation)) {
+        context.fillStyle = get_colour(piece) + opacity;
+        context.fillRect(x + off_x, y + off_y, 1, 1);
+    }
 }
