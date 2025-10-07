@@ -13,15 +13,9 @@ body {
     flex-direction: row;
     align-items: flex-start;
     justify-content: center;
+    gap: 10px;
 }
 
 #board {
   border: 1px var(--border) solid;
 }
-
-#queue {
-}
-
-#hold {
-}
-
