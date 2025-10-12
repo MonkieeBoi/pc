@@ -17,4 +17,9 @@ class Piece {
     get_colour() {
         return get_colour(this.type);
     }
+
+    move(dx, dy) {
+        this.x += dx;
+        this.y += dy;
+    }
 }
