@@ -25,7 +25,7 @@ function main() {
 
     const game = new Game();
 
-    draw_hold(hold_context, game.hold);
+    draw_hold(hold_context, game.hold_piece);
     draw_queue(queue_context, game.queue);
     draw_game(board_context, game);
 }
