@@ -73,20 +73,16 @@ class Game {
 
     spin(goal) {
         const init = this.active.rotation;
-        const x = this.active.x;
-        const y = this.active.y;
-        console.log(get_kicks(this.active.type, init, goal));
         for (let [kick_x, kick_y] of get_kicks(this.active.type, init, goal)) {
             if (
                 !this.check_collide(
                     this.active.type,
-                    x + kick_x,
-                    y + kick_y,
+                    this.active.x + kick_x,
+                    this.active.y + kick_y,
                     goal,
                 )
             ) {
-                this.active.x += kick_x;
-                this.active.y += kick_y;
+                this.active.move(kick_x, kick_y);
                 this.active.rotation = goal;
                 break;
             }
