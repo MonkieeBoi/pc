@@ -16,6 +16,10 @@ body {
     gap: 10px;
 }
 
+#game:focus {
+  outline: none;
+}
+
 #board {
   border: 1px var(--border) solid;
 }

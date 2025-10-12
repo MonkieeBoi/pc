@@ -3,7 +3,8 @@ class Game {
         this.board = new Board();
         this.queue = new Queue();
         this.active = this.queue.pop();
-        this.hold = 0;
+        this.hold_piece = 0;
+        this.held = false;
     }
 
     check_collide(piece, cx, cy, rotation) {
@@ -33,5 +34,74 @@ class Game {
             y--;
         }
         return y;
+    }
+
+    hold() {
+        this.hold_piece = this.active.type;
+        this.active = this.queue.pop();
+    }
+
+    move_piece_x(step, amount) {
+        while (
+            !this.check_collide(
+                this.active.type,
+                this.active.x + step,
+                this.active.y,
+                this.active.rotation,
+            ) &&
+            amount > 0
+        ) {
+            this.active.move(step, 0);
+            amount--;
+        }
+    }
+
+    move_piece_y(step, amount) {
+        while (
+            !this.check_collide(
+                this.active.type,
+                this.active.x,
+                this.active.y + step,
+                this.active.rotation,
+            ) &&
+            amount > 0
+        ) {
+            this.active.move(0, step);
+            amount--;
+        }
+    }
+
+    spin(goal) {
+        const init = this.active.rotation;
+        const x = this.active.x;
+        const y = this.active.y;
+        console.log(get_kicks(this.active.type, init, goal));
+        for (let [kick_x, kick_y] of get_kicks(this.active.type, init, goal)) {
+            if (
+                !this.check_collide(
+                    this.active.type,
+                    x + kick_x,
+                    y + kick_y,
+                    goal,
+                )
+            ) {
+                this.active.x += kick_x;
+                this.active.y += kick_y;
+                this.active.rotation = goal;
+                break;
+            }
+        }
+    }
+
+    spin_cw() {
+        this.spin(spin_cw(this.active.rotation));
+    }
+
+    spin_ccw() {
+        this.spin(spin_ccw(this.active.rotation));
+    }
+
+    spin_180() {
+        this.spin(spin_180(this.active.rotation));
     }
 }
