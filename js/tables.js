@@ -216,6 +216,7 @@ const kicks_2x2 = gen_kick_table(kick_offset_2x2, kick_offset_180_2x2);
 
 // TIJLOSZ order
 const kick_map = [
+    null,
     kicks_2x3,
     kicks_1x4,
     kicks_2x3,

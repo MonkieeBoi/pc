@@ -18,6 +18,12 @@ class Piece {
         return get_colour(this.type);
     }
 
+    get_cells() {
+        return get_offsets(this.type, this.rotation).map((
+            [x, y],
+        ) => [x + this.x, y + this.y]);
+    }
+
     move(dx, dy) {
         this.x += dx;
         this.y += dy;

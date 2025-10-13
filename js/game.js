@@ -37,8 +37,18 @@ class Game {
     }
 
     hold() {
-        this.hold_piece = this.active.type;
-        this.active = this.queue.pop();
+        if (this.held) {
+            return;
+        }
+        this.held = true;
+        if (this.hold_piece === 0) {
+            this.hold_piece = this.active.type;
+            this.active = this.queue.pop();
+        } else {
+            let tmp = this.active.type;
+            this.active = new Piece(this.hold_piece);
+            this.hold_piece = tmp;
+        }
     }
 
     move_piece_x(step, amount) {
