@@ -46,7 +46,7 @@ function draw_game(context, game) {
         game.active.x,
         game.get_ghost_y(),
         game.active.rotation,
-        "4D"
+        "4D",
     );
 }
 
@@ -80,6 +80,10 @@ function draw_board(context, board) {
             }
         }
     }
+    let game_div = document.getElementById("game");
+    if (!(document.activeElement === game_div)) {
+        draw_oof(context)
+    }
 }
 
 function draw_queue(context, queue) {
@@ -111,4 +115,19 @@ function draw_piece(context, piece, x, y, rotation, opacity) {
         context.fillStyle = get_colour(piece) + opacity;
         context.fillRect(x + off_x, y + off_y, 1, 1);
     }
+}
+
+function draw_oof(context) {
+    transform = context.getTransform();
+    context.resetTransform();
+    context.font = `bold ${CELL_SIZE + 5}px Arial`;
+    context.fillStyle = "rgba(235, 203, 139, 0.7)";
+    context.textAlign = "center";
+    context.textBaseline = "middle";
+    context.fillText(
+        "OUT OF FOCUS",
+        context.canvas.width / 2,
+        context.canvas.height / 2,
+    );
+    context.setTransform(transform);
 }

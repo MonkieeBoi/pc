@@ -15,4 +15,15 @@ class Board {
         }
         return this.cells[y][x] != 0;
     }
+
+    set(x, y, piece) {
+        while (this.cells.length <= y) {
+            this.cells.push(Array(BOARD_WIDTH).fill(0));
+        }
+        this.cells[y][x] = piece;
+    }
+
+    highest() {
+        return this.cells.length;
+    }
 }
