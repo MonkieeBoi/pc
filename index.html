@@ -9,9 +9,11 @@
     <script src="js/util.js"></script>
     <script src="js/tables.js"></script>
     <script src="js/piece.js"></script>
+    <script src="js/expandregex.js"></script>
     <script src="js/queue.js"></script>
     <script src="js/board.js"></script>
     <script src="js/game.js"></script>
+    <script src="js/input.js"></script>
     <script src="js/main.js"></script>
   </head>
   <body>
@@ -20,9 +22,13 @@
       <canvas id="hold"></canvas>
       <canvas id="board"></canvas>
       <canvas id="queue"></canvas>
-      <script>
-        main();
-      </script>
     </div>
+    <div id="settings">
+    <p id="patterns" contenteditable></p>
+      <button id="settings_button">Generate</button>
+    </div>
+    <script>
+      main();
+    </script>
   </body>
 </html>

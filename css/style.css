@@ -9,11 +9,11 @@ body {
 }
 
 #game {
-    display: flex;
-    flex-direction: row;
-    align-items: flex-start;
-    justify-content: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 10px;
 }
 
 #game:focus {
@@ -22,4 +22,16 @@ body {
 
 #board {
   border: 1px var(--border) solid;
+}
+
+button {
+  background-color: var(--alt-bg);
+  border: none;
+}
+
+#patterns {
+  max-width: 200px;
+  min-height: 20px;
+  border: 2px solid var(--alt-bg);
+  font-family: "Courier New", Courier, monospace;
 }
