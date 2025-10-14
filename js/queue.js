@@ -45,3 +45,22 @@ class Queue {
         return res;
     }
 }
+
+class PQueue {
+    constructor(queue) {
+        this.queue = [];
+        this.queue = Array.from(queue).map((x) => get_piece_number(x));
+    }
+
+    pop() {
+        return new Piece(this.queue.shift());
+    }
+
+    preview() {
+        let res = [];
+        for (let i = 0; i < Math.min(this.queue.length, BAG_SIZE); i++) {
+            res.push(this.queue[i]);
+        }
+        return res;
+    }
+}
