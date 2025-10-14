@@ -6,6 +6,8 @@ function main() {
     let board_canvas = document.getElementById("board");
     let queue_canvas = document.getElementById("queue");
     let hold_canvas = document.getElementById("hold");
+    let game_div = document.getElementById("game");
+    let patterns = document.getElementById("patterns");
 
     board_canvas.width = BOARD_WIDTH * CELL_SIZE;
     board_canvas.height = BOARD_HEIGHT * CELL_SIZE;
@@ -23,11 +25,21 @@ function main() {
     board_context.setTransform(CELL_SIZE, 0, 0, -CELL_SIZE, 0, 20 * CELL_SIZE);
     queue_context.setTransform(CELL_SIZE, 0, 0, -CELL_SIZE, 0, 14 * CELL_SIZE);
 
-    const game = new Game();
+    let game = new Game();
+    const input = new Input(game_div);
 
-    draw_hold(hold_context, game.hold_piece);
-    draw_queue(queue_context, game.queue);
-    draw_game(board_context, game);
+    document.getElementById("settings_button").onclick = () => {
+        game = new Game(patterns.innerText.toUpperCase());
+    };
+
+    requestAnimationFrame(frame);
+    function frame(timestamp) {
+        game.tick(timestamp, input.read());
+        draw_hold(hold_context, game.hold_piece);
+        draw_queue(queue_context, game.queue);
+        draw_game(board_context, game);
+        requestAnimationFrame(frame);
+    }
 }
 
 function draw_game(context, game) {
@@ -82,7 +94,7 @@ function draw_board(context, board) {
     }
     let game_div = document.getElementById("game");
     if (!(document.activeElement === game_div)) {
-        draw_oof(context)
+        draw_oof(context);
     }
 }
 
@@ -90,7 +102,7 @@ function draw_queue(context, queue) {
     context.fillStyle = get_colour(0);
     context.fillRect(0, 0, 4, 14);
     let preview = queue.preview();
-    for (let i = 0; i < 5; i++) {
+    for (let i = 0; i < Math.min(preview.length, 5); i++) {
         draw_piece(context, preview[i], 1, 12 - 3 * i, 0);
     }
 }
