@@ -24,6 +24,7 @@ class Game {
     reset() {
         this.board = new Board();
         this.held = false;
+        this.hold_piece = 0;
         this.timers = {
             "l": -1,
             "r": -1,
