@@ -11,6 +11,12 @@ class Input {
             "Space": "hd",
             "KeyR": "reset",
         };
+        let keybinds =
+            (JSON.parse(localStorage.getItem("settings")) || {})["keybinds"] ||
+            {};
+        for (let keybind in keybinds) {
+            this.keymap[keybind] = keybinds[keybind];
+        }
         this.rev_keymap = {};
         this.buffer = {};
         this.sustain = {
@@ -33,6 +39,14 @@ class Input {
         if (this.keymap[key] != undefined) {
             return false;
         }
+        let settings = JSON.parse(localStorage.getItem("settings")) || {};
+        settings["keybinds"] = settings["keybinds"] || {};
+
+        delete settings["keybinds"][this.rev_keymap[action]];
+
+        settings["keybinds"][key] = action;
+        localStorage.setItem("settings", JSON.stringify(settings));
+
         delete this.keymap[this.rev_keymap[action]];
         this.keymap[key] = action;
         this.rev_keymap[action] = key;
