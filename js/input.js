@@ -30,9 +30,13 @@ class Input {
     }
 
     rebind(action, key) {
+        if (this.keymap[key] != undefined) {
+            return false;
+        }
         delete this.keymap[this.rev_keymap[action]];
         this.keymap[key] = action;
         this.rev_keymap[action] = key;
+        return true;
     }
 
     handle_key_down(event) {

@@ -8,6 +8,8 @@ function main() {
     let hold_canvas = document.getElementById("hold");
     let game_div = document.getElementById("game");
     let patterns = document.getElementById("patterns");
+    let keybinds = document.getElementById("keybinds");
+    let tunings = document.getElementById("tunings");
 
     board_canvas.width = BOARD_WIDTH * CELL_SIZE;
     board_canvas.height = BOARD_HEIGHT * CELL_SIZE;
@@ -28,9 +30,48 @@ function main() {
     let game = new Game();
     const input = new Input(game_div);
 
-    document.getElementById("settings_button").onclick = () => {
+    document.getElementById("generate_button").onclick = () => {
         game = new Game(patterns.innerText.toUpperCase());
     };
+
+    for (let action in input.rev_keymap) {
+        let tr = keybinds.insertRow();
+
+        let label_td = tr.insertCell();
+        label_td.innerText = action;
+
+        let value_td = tr.insertCell();
+        let value_input = document.createElement("input");
+
+        value_td.appendChild(value_input);
+        value_input.value = input.rev_keymap[action];
+
+        value_input.onkeydown = function (event) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (input.rebind(action, event.code)) {
+                value_input.value = event.code;
+            }
+        };
+    }
+
+    // for (let tuning of ["das", "arr", "sd_arr"]) {
+    for (let tuning of ["das"]) {
+        let tr = tunings.insertRow();
+
+        let label_td = tr.insertCell();
+        label_td.innerText = tuning;
+
+        let value_td = tr.insertCell();
+        let value_input = document.createElement("input");
+
+        value_td.appendChild(value_input);
+        value_input.value = game[tuning];
+
+        value_input.onchange = function (event) {
+            game[tuning] = event.target.value;
+        };
+    }
 
     requestAnimationFrame(frame);
     function frame(timestamp) {
