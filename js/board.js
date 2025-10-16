@@ -26,4 +26,8 @@ class Board {
     highest() {
         return this.cells.length;
     }
+
+    is_empty() {
+        return this.cells.flat().reduce((sum, c) => sum + c, 0) == 0;
+    }
 }
