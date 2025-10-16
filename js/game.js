@@ -179,6 +179,16 @@ class Game {
             );
             this.reset();
         }
+        if (
+            this.check_collide(
+                this.active.type,
+                this.active.x,
+                this.active.y,
+                this.active.rotation,
+            )
+        ) {
+            this.reset();
+        }
     }
 
     tick(time, actions) {
