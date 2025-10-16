@@ -159,6 +159,13 @@ class Game {
         }
         this.board.clear_lines();
         this.active = this.queue.pop();
+        if (this.active.type != undefined) {
+            return;
+        }
+        if (this.hold_piece != 0) {
+            this.active = new Piece(this.hold_piece);
+            this.hold_piece = 0;
+        }
     }
 
     tick(time, actions) {
