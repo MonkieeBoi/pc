@@ -2,6 +2,14 @@ const BAG_SIZE = 7;
 
 class Queue {
     constructor() {
+        this.reset();
+    }
+
+    #gen_bag() {
+        return Array.from(Array(BAG_SIZE), (_, i) => (i + 1) % 8);
+    }
+
+    reset() {
         this.bag = this.#gen_bag();
         this.queue = Array(BAG_SIZE);
         for (let i = BAG_SIZE - 1; i > 0; i--) {
@@ -12,10 +20,6 @@ class Queue {
         this.queue[BAG_SIZE - 1] = this.bag[0];
         this.bag = this.#gen_bag();
         this.pos = 0;
-    }
-
-    #gen_bag() {
-        return Array.from(Array(BAG_SIZE), (_, i) => (i + 1) % 8);
     }
 
     pop() {
@@ -48,8 +52,14 @@ class Queue {
 
 class PQueue {
     constructor(queue) {
-        this.queue = [];
-        this.queue = Array.from(queue).map((x) => get_piece_number(x));
+        this.init_queue = queue;
+        this.reset();
+    }
+
+    reset() {
+        this.queue = Array.from(this.init_queue).map((x) =>
+            get_piece_number(x)
+        );
     }
 
     pop() {

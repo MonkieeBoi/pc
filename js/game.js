@@ -3,9 +3,17 @@ class Game {
         this.arr = 0;
         this.sd_arr = 0;
         this.das = 69;
+        this.is_prac = patterns != undefined;
+
         if (patterns != undefined) {
             this.calc_queues(patterns);
+            this.queue = new PQueue(
+                this.queues[randInt(0, this.queues.length - 1)],
+            );
+        } else {
+            this.queue = new Queue();
         }
+
         this.reset();
     }
 
@@ -30,12 +38,12 @@ class Game {
             "r": -1,
             "sd": -1,
         };
-        if (this.queues === undefined || this.queues.length == 0) {
-            this.queue = new Queue();
-        } else {
-            this.queue = new PQueue(
-                this.queues[randInt(0, this.queues.length - 1)],
-            );
+
+        this.queue.reset();
+        if (
+            this.queues != undefined && this.queues.length > 0 &&
+            this.queue.preview().length > 1
+        ) {
             this.hold_piece = this.queue.pop().type;
         }
         this.active = this.queue.pop();
@@ -159,12 +167,17 @@ class Game {
         }
         this.board.clear_lines();
         this.active = this.queue.pop();
-        if (this.active.type != undefined) {
-            return;
-        }
-        if (this.hold_piece != 0) {
+        if (this.active.type === undefined && this.hold_piece != 0) {
             this.active = new Piece(this.hold_piece);
             this.hold_piece = 0;
+        }
+        if (this.active.type === undefined) {
+            this.reset();
+        } else if (this.is_prac && this.board.is_empty()) {
+            this.queue = new PQueue(
+                this.queues[randInt(0, this.queues.length - 1)],
+            );
+            this.reset();
         }
     }
 
