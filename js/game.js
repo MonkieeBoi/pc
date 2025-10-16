@@ -170,16 +170,16 @@ class Game {
         if (this.active.type === undefined && this.hold_piece != 0) {
             this.active = new Piece(this.hold_piece);
             this.hold_piece = 0;
+            this.held = true;
         }
-        if (this.active.type === undefined) {
-            this.reset();
-        } else if (this.is_prac && this.board.is_empty()) {
+        if (this.is_prac && this.board.is_empty()) {
             this.queue = new PQueue(
                 this.queues[randInt(0, this.queues.length - 1)],
             );
             this.reset();
         }
         if (
+            this.active.type === undefined ||
             this.check_collide(
                 this.active.type,
                 this.active.x,
