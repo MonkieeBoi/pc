@@ -18,16 +18,40 @@
   </head>
   <body>
     <noscript>no JS :stare:</noscript>
+    <header>
+      <img id="logo" src="./favicon.ico" />
+      <nav>
+        <ul class="nav-links">
+          <!-- <li><a href="#">Home</a></li> -->
+        </ul>
+      </nav>
+      <button
+        id="toggle_settings"
+        onclick="document.querySelector('#settings-modal').classList.toggle('hidden')"
+      >
+        <img class="icon" src="images/icons/settings.svg" />
+      </button>
+    </header>
     <div id="game" tabindex="1">
       <canvas id="hold"></canvas>
       <canvas id="board"></canvas>
       <canvas id="queue"></canvas>
     </div>
-    <div id="settings">
+    <div id="queue_patterns">
       <p id="patterns" contenteditable="plaintext-only"></p>
       <button id="generate_button">Generate</button>
-      <table id="keybinds"></table>
-      <table id="tunings"></table>
+    </div>
+    <div
+      id="settings-modal"
+      class=""
+      onclick="document.querySelector('#settings-modal').classList.toggle('hidden')"
+    >
+      <div id="settings" onclick="event.stopPropagation()">
+        <h3>Keybinds</h3>
+        <table id="keybinds"></table>
+        <h3>Tunings</h3>
+        <table id="tunings"></table>
+      </div>
     </div>
     <script>
       main();
