@@ -51,6 +51,27 @@ header {
   width: 30px;
 }
 
+#content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  gap: 30px;
+  margin-right: auto;
+  margin-left: auto;
+}
+
+@media (max-width: 913px) {
+  #content {
+    flex-direction: column;
+  }
+}
+
+#dummy_left {
+  max-width: 200px;
+  min-width: 200px;
+}
+
 #game {
   display: flex;
   flex-direction: row;
@@ -72,9 +93,21 @@ button {
   border: none;
 }
 
-#patterns {
+#queue_patterns {
+  display: flex;
+  flex-direction: column;
   max-width: 200px;
+  min-width: 200px;
+  align-items: center;
+}
+
+#generate_button {
+  max-height: 30px;
+}
+
+#patterns {
   min-height: 20px;
+  width: 100%;
   border: 2px solid var(--alt-bg);
   font-family: "Courier New", Courier, monospace;
 }
