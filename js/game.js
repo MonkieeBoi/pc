@@ -225,20 +225,18 @@ class Game {
             }
         }
         if (buf["sd"]) {
-            this.move_piece_y(-1, BOARD_HEIGHT * 2);
-            // if (this.timers["sd"] == -1) {
-            //     this.timers["sd"] = time;
-            //     this.move_piece_y(-1, 1);
-            // } else if (time - this.timers["sd"] >= this.das) {
-            //     let sddas = this.timers["sd"];
-            //     while (sddas < time) {
-            //         if (!this.move_piece_y(-1, 1)) {
-            //             break;
-            //         }
-            //         sddas += this.sd_arr;
-            //     }
-            //     this.timers["sd"] = sddas;
-            // }
+            if (this.timers["sd"] == -1) {
+                this.timers["sd"] = time;
+            }
+            let sddas = this.timers["sd"];
+            while (sddas < time) {
+                if (!this.move_piece_y(-1, 1)) {
+                    sddas = time;
+                    break;
+                }
+                sddas += this.sd_arr;
+            }
+            this.timers["sd"] = sddas;
         } else {
             this.timers["sd"] = -1;
         }
@@ -250,7 +248,7 @@ class Game {
         } else if (
             this.timers["l"] != -1 && time - this.timers["l"] >= this.das
         ) {
-            ldas = this.timers["l"];
+            ldas = this.timers["l"] + this.das;
         }
 
         if (!buf["r"]) {
@@ -258,7 +256,7 @@ class Game {
         } else if (
             this.timers["r"] != -1 && time - this.timers["r"] >= this.das
         ) {
-            rdas = this.timers["r"];
+            rdas = this.timers["r"] + this.das;
         }
 
         // replace with arr later
@@ -266,19 +264,27 @@ class Game {
         } else if (ldas != -1 && (rdas == -1 || ldas > rdas)) {
             while (ldas < time) {
                 if (!this.move_piece_x(-1, 1)) {
+                    ldas = time;
                     break;
                 }
                 ldas += this.arr;
             }
             this.timers["l"] = ldas;
+            if (this.timers["r"] != -1) {
+                this.timers["r"] = ldas - 1;
+            }
         } else if (rdas != -1) {
             while (rdas < time) {
                 if (!this.move_piece_x(1, 1)) {
+                    rdas = time;
                     break;
                 }
                 rdas += this.arr;
             }
             this.timers["r"] = rdas;
+            if (this.timers["l"] != -1) {
+                this.timers["l"] = rdas - 1;
+            }
         }
         if (buf["l"] && this.timers["l"] == -1) {
             this.move_piece_x(-1, 1);
