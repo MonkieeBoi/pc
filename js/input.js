@@ -11,12 +11,6 @@ class Input {
             "Space": "hd",
             "KeyR": "reset",
         };
-        let keybinds =
-            (JSON.parse(localStorage.getItem("settings")) || {})["keybinds"] ||
-            {};
-        for (let keybind in keybinds) {
-            this.keymap[keybind] = keybinds[keybind];
-        }
         this.rev_keymap = {};
         this.buffer = {};
         this.sustain = {
@@ -27,6 +21,12 @@ class Input {
         for (let key in this.keymap) {
             this.rev_keymap[this.keymap[key]] = key;
             this.buffer[this.keymap[key]] = false;
+        }
+        let keybinds =
+            (JSON.parse(localStorage.getItem("settings")) || {})["keybinds"] ||
+            {};
+        for (let keybind in keybinds) {
+            this.rebind(keybinds[keybind], keybind);
         }
         focus_element.addEventListener(
             "keydown",
@@ -68,7 +68,7 @@ class Input {
     }
 
     handle_key_up(event) {
-        const action = this.keymap[event.key];
+        const action = this.keymap[event.code];
         if (action === undefined) {
             return;
         }
