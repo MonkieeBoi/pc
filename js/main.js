@@ -1,4 +1,4 @@
-let CELL_SIZE = 20;
+let CELL_SIZE = 25;
 let BOARD_HEIGHT = 20;
 let BOARD_WIDTH = 10;
 
@@ -8,8 +8,6 @@ function main() {
     let hold_canvas = document.getElementById("hold");
     let game_div = document.getElementById("game");
     let patterns = document.getElementById("patterns");
-    let keybinds = document.getElementById("keybinds");
-    let tunings = document.getElementById("tunings");
 
     board_canvas.width = BOARD_WIDTH * CELL_SIZE;
     board_canvas.height = BOARD_HEIGHT * CELL_SIZE;
@@ -30,9 +28,31 @@ function main() {
     let game = new Game();
     const input = new Input(game_div);
 
+    patterns.addEventListener("beforeinput", function (event) {
+        if (event.data && !/[toiljszpc\[\]!*0-9\n\r]/ig.test(event.data)) {
+            event.preventDefault();
+        }
+    });
+
+    init_input(input, game);
+
     document.getElementById("generate_button").onclick = () => {
         game = new Game(patterns.innerText.toUpperCase());
     };
+
+    requestAnimationFrame(frame);
+    function frame(timestamp) {
+        game.tick(timestamp, input.read());
+        draw_hold(hold_context, game.hold_piece);
+        draw_queue(queue_context, game.queue);
+        draw_game(board_context, game);
+        requestAnimationFrame(frame);
+    }
+}
+
+function init_input(input, game) {
+    let tunings = document.getElementById("tunings");
+    let keybinds = document.getElementById("keybinds");
 
     for (let action in input.rev_keymap) {
         let tr = keybinds.insertRow();
@@ -55,8 +75,8 @@ function main() {
         };
     }
 
-    // for (let tuning of ["das", "arr", "sd_arr"]) {
-    for (let tuning of ["das"]) {
+    for (let tuning of ["das", "arr", "sd_arr"]) {
+    // for (let tuning of ["das"]) {
         let tr = tunings.insertRow();
 
         let label_td = tr.insertCell();
@@ -67,19 +87,12 @@ function main() {
 
         value_td.appendChild(value_input);
         value_input.value = game[tuning];
+        value_input.type = "number";
+        value_input.min = 0;
 
         value_input.onchange = function (event) {
             game[tuning] = event.target.value;
         };
-    }
-
-    requestAnimationFrame(frame);
-    function frame(timestamp) {
-        game.tick(timestamp, input.read());
-        draw_hold(hold_context, game.hold_piece);
-        draw_queue(queue_context, game.queue);
-        draw_game(board_context, game);
-        requestAnimationFrame(frame);
     }
 }
 
