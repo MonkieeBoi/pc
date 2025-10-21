@@ -29,7 +29,7 @@ function main() {
     const input = new Input(game_div);
 
     patterns.addEventListener("beforeinput", function (event) {
-        if (event.data && !/[toiljszpc\[\]!*0-9\n\r]/ig.test(event.data)) {
+        if (event.data && !/[toiljszpc\^\[\]!*0-9\n\r]/ig.test(event.data)) {
             event.preventDefault();
         }
     });
