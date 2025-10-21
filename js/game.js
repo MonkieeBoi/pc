@@ -82,7 +82,7 @@ class Game {
         if (this.held) {
             return;
         }
-        this.held = true;
+        this.held = !this.is_prac;
         if (this.hold_piece === 0) {
             this.hold_piece = this.active.type;
             this.active = this.queue.pop();
@@ -224,6 +224,61 @@ class Game {
                     break;
             }
         }
+        let ldas = -1;
+        let rdas = -1;
+
+        if (!buf["l"]) {
+            this.timers["l"] = -1;
+        } else if (
+            this.timers["l"] != -1 && time - this.timers["l"] >= this.das + this.arr
+        ) {
+            ldas = this.timers["l"] + this.das;
+        }
+
+        if (!buf["r"]) {
+            this.timers["r"] = -1;
+        } else if (
+            this.timers["r"] != -1 && time - this.timers["r"] >= this.das + this.arr
+        ) {
+            rdas = this.timers["r"] + this.das;
+        }
+
+        // replace with arr later
+        if (buf["l"] && buf["r"] && (ldas == -1 || rdas == -1)) {
+        } else if (ldas != -1 && (rdas == -1 || ldas > rdas)) {
+            while (ldas + this.arr < time) {
+                if (!this.move_piece_x(-1, 1)) {
+                    ldas = time;
+                    break;
+                }
+                ldas += this.arr;
+            }
+            this.timers["l"] = ldas - this.das;
+            if (this.timers["r"] != -1) {
+                this.timers["r"] = ldas - 1;
+            }
+        } else if (rdas != -1) {
+            while (rdas + this.arr < time) {
+                if (!this.move_piece_x(1, 1)) {
+                    rdas = time - this.das;
+                    break;
+                }
+                rdas += this.arr;
+            }
+            this.timers["r"] = rdas - this.das;
+            if (this.timers["l"] != -1) {
+                this.timers["l"] = rdas - 1;
+            }
+        }
+        if (buf["l"] && this.timers["l"] == -1) {
+            this.move_piece_x(-1, 1);
+            this.timers["l"] = time;
+        }
+        if (buf["r"] && this.timers["r"] == -1) {
+            this.move_piece_x(1, 1);
+            this.timers["r"] = time;
+        }
+
         if (buf["sd"]) {
             if (this.timers["sd"] == -1) {
                 this.timers["sd"] = time;
@@ -239,60 +294,6 @@ class Game {
             this.timers["sd"] = sddas;
         } else {
             this.timers["sd"] = -1;
-        }
-        let ldas = -1;
-        let rdas = -1;
-
-        if (!buf["l"]) {
-            this.timers["l"] = -1;
-        } else if (
-            this.timers["l"] != -1 && time - this.timers["l"] >= this.das
-        ) {
-            ldas = this.timers["l"] + this.das;
-        }
-
-        if (!buf["r"]) {
-            this.timers["r"] = -1;
-        } else if (
-            this.timers["r"] != -1 && time - this.timers["r"] >= this.das
-        ) {
-            rdas = this.timers["r"] + this.das;
-        }
-
-        // replace with arr later
-        if (buf["l"] && buf["r"] && (ldas == -1 || rdas == -1)) {
-        } else if (ldas != -1 && (rdas == -1 || ldas > rdas)) {
-            while (ldas < time) {
-                if (!this.move_piece_x(-1, 1)) {
-                    ldas = time;
-                    break;
-                }
-                ldas += this.arr;
-            }
-            this.timers["l"] = ldas;
-            if (this.timers["r"] != -1) {
-                this.timers["r"] = ldas - 1;
-            }
-        } else if (rdas != -1) {
-            while (rdas < time) {
-                if (!this.move_piece_x(1, 1)) {
-                    rdas = time;
-                    break;
-                }
-                rdas += this.arr;
-            }
-            this.timers["r"] = rdas;
-            if (this.timers["l"] != -1) {
-                this.timers["l"] = rdas - 1;
-            }
-        }
-        if (buf["l"] && this.timers["l"] == -1) {
-            this.move_piece_x(-1, 1);
-            this.timers["l"] = time;
-        }
-        if (buf["r"] && this.timers["r"] == -1) {
-            this.move_piece_x(1, 1);
-            this.timers["r"] = time;
         }
     }
 }

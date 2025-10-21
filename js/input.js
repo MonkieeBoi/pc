@@ -72,7 +72,7 @@ class Input {
         if (action === undefined) {
             return;
         }
-        if (action in this.buffer) {
+        if (action in this.sustain) {
             this.buffer[action] = false;
         }
         event.preventDefault();
