@@ -3,34 +3,22 @@ class Game {
         this.arr = 0;
         this.sd_arr = 0;
         this.das = 69;
-        this.is_prac = patterns != undefined;
+        this.is_prac = false;
 
-        if (patterns != undefined) {
+        this.queue = new Queue();
+        this.board = new Board();
+        if (patterns != undefined && patterns.length > 0) {
             this.calc_queues(patterns);
-            this.queue = new PQueue(
-                this.queues[randInt(0, this.queues.length - 1)],
-            );
-        } else {
-            this.queue = new Queue();
+            if (this.queues.length > 0) {
+                this.regen();
+                this.is_prac = true;
+            }
         }
 
         this.reset();
     }
 
-    calc_queues(patterns) {
-        let queues = new Set();
-        for (
-            const pattern of patterns.split("\n").filter((x) => x.trim())
-        ) {
-            for (const q of pieces(pattern)) {
-                queues.add(q);
-            }
-        }
-        this.queues = [...queues];
-    }
-
     reset() {
-        this.board = new Board();
         this.held = false;
         this.hold_piece = 0;
         this.timers = {
@@ -40,6 +28,7 @@ class Game {
         };
 
         this.queue.reset();
+        this.board.reset();
         if (
             this.queues != undefined && this.queues.length > 0 &&
             this.queue.preview().length > 1
@@ -47,6 +36,50 @@ class Game {
             this.hold_piece = this.queue.pop().type;
         }
         this.active = this.queue.pop();
+    }
+
+    regen() {
+        let queue = this.queues[randInt(0, this.queues.length - 1)];
+        this.queue = new PQueue(queue);
+        let hashes = this.hashmap[queue].map((h) => this.hashs[h]) || [0];
+        this.board = new Board(hashes[randInt(0, this.hashs.length - 1)]);
+    }
+
+    calc_queues(patterns) {
+        let queues = new Set();
+        this.hashs = [];
+        let cur_hashes = new Set();
+        let hash_map = {};
+        let used = false;
+        for (const pattern of patterns.split("\n")) {
+            if (/^\d+$/.test(pattern)) {
+                this.hashs.push(BigInt(pattern));
+                if (!used) {
+                    cur_hashes.add(this.hashs.length - 1);
+                } else {
+                    cur_hashes = new Set([this.hashs.length - 1]);
+                    used = false;
+                }
+                continue;
+            }
+            used = true;
+            for (const q of pieces(pattern)) {
+                queues.add(q);
+                if (!hash_map.hasOwnProperty(q)) {
+                    hash_map[q] = new Set();
+                }
+                for (const h of cur_hashes) {
+                    hash_map[q].add(h);
+                }
+            }
+        }
+
+        this.hashmap = {};
+        for (const [queue, hashes] of Object.entries(hash_map)) {
+            this.hashmap[queue] = [...hashes];
+        }
+
+        this.queues = [...queues];
     }
 
     check_collide(piece, cx, cy, rotation) {
@@ -173,9 +206,7 @@ class Game {
             this.held = true;
         }
         if (this.is_prac && this.board.is_empty()) {
-            this.queue = new PQueue(
-                this.queues[randInt(0, this.queues.length - 1)],
-            );
+            this.regen();
             this.reset();
         }
         if (
@@ -230,7 +261,8 @@ class Game {
         if (!buf["l"]) {
             this.timers["l"] = -1;
         } else if (
-            this.timers["l"] != -1 && time - this.timers["l"] >= this.das + this.arr
+            this.timers["l"] != -1 &&
+            time - this.timers["l"] >= this.das + this.arr
         ) {
             ldas = this.timers["l"] + this.das;
         }
@@ -238,7 +270,8 @@ class Game {
         if (!buf["r"]) {
             this.timers["r"] = -1;
         } else if (
-            this.timers["r"] != -1 && time - this.timers["r"] >= this.das + this.arr
+            this.timers["r"] != -1 &&
+            time - this.timers["r"] >= this.das + this.arr
         ) {
             rdas = this.timers["r"] + this.das;
         }

@@ -25,8 +25,11 @@ class Input {
         let keybinds =
             (JSON.parse(localStorage.getItem("settings")) || {})["keybinds"] ||
             {};
-        for (let keybind in keybinds) {
-            this.rebind(keybinds[keybind], keybind);
+        for (let key in keybinds) {
+            let action = keybinds[key];
+            delete this.keymap[this.rev_keymap[action]];
+            this.keymap[key] = action;
+            this.rev_keymap[action] = key;
         }
         focus_element.addEventListener(
             "keydown",
@@ -54,6 +57,8 @@ class Input {
     }
 
     handle_key_down(event) {
+        event.preventDefault();
+        event.stopPropagation();
         if (event.repeat) {
             return;
         }
@@ -64,10 +69,11 @@ class Input {
         if (action in this.buffer) {
             this.buffer[action] = true;
         }
-        event.preventDefault();
     }
 
     handle_key_up(event) {
+        event.preventDefault();
+        event.stopPropagation();
         const action = this.keymap[event.code];
         if (action === undefined) {
             return;
@@ -75,7 +81,6 @@ class Input {
         if (action in this.sustain) {
             this.buffer[action] = false;
         }
-        event.preventDefault();
     }
 
     read() {

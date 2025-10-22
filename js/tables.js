@@ -235,6 +235,7 @@ const colour_table = [
     "#ebcb8b",
     "#a3be8c",
     "#bf616a",
+    "#d8dee9",
 ];
 
 const piece_to_name = [null, "T", "I", "J", "L", "O", "S", "Z"];
