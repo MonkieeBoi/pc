@@ -1,6 +1,26 @@
 class Board {
-    constructor() {
+    constructor(hash = 0n) {
+        this.hash = hash;
+        this.reset();
+    }
+
+    reset() {
         this.cells = [];
+        let x = BOARD_WIDTH - 1;
+        let y = 0;
+        let hash = this.hash;
+        while (hash != 0n) {
+            if (hash & 1n) {
+                this.set(x, y, 8);
+            }
+
+            x--;
+            if (x == -1) {
+                x = BOARD_WIDTH - 1;
+                y++;
+            }
+            hash >>= 1n;
+        }
     }
 
     clear_lines() {

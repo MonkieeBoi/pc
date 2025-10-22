@@ -8,6 +8,14 @@ function main() {
     let hold_canvas = document.getElementById("hold");
     let game_div = document.getElementById("game");
     let patterns = document.getElementById("patterns");
+    patterns.innerText =
+        location.hash.substring(1).replaceAll(",", "\n").replaceAll("~", "^") ||
+        "";
+    window.history.replaceState(
+        null,
+        "",
+        location.href.replace(location.hash, ""),
+    );
 
     board_canvas.width = BOARD_WIDTH * CELL_SIZE;
     board_canvas.height = BOARD_HEIGHT * CELL_SIZE;
@@ -25,7 +33,7 @@ function main() {
     board_context.setTransform(CELL_SIZE, 0, 0, -CELL_SIZE, 0, 20 * CELL_SIZE);
     queue_context.setTransform(CELL_SIZE, 0, 0, -CELL_SIZE, 0, 14 * CELL_SIZE);
 
-    let game = new Game();
+    let game = new Game(patterns.innerText.toUpperCase());
     const input = new Input(game_div);
 
     patterns.addEventListener("beforeinput", function (event) {
@@ -76,7 +84,6 @@ function init_input(input, game) {
     }
 
     for (let tuning of ["das", "arr", "sd_arr"]) {
-    // for (let tuning of ["das"]) {
         let tr = tunings.insertRow();
 
         let label_td = tr.insertCell();
@@ -94,6 +101,16 @@ function init_input(input, game) {
             game[tuning] = event.target.value;
         };
     }
+    window.addEventListener("keydown", (event) => {
+        let url = new URL(location.href.replace(location.hash, ""));
+        url.hash = document.getElementById("patterns").innerText.replaceAll(
+            "\n",
+            ",",
+        ).replaceAll("^", "~");
+        if (event.key == "y") {
+            navigator.clipboard.writeText(url.href);
+        }
+    });
 }
 
 function draw_game(context, game) {
