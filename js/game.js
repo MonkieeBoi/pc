@@ -41,23 +41,23 @@ class Game {
     regen() {
         let queue = this.queues[randInt(0, this.queues.length - 1)];
         this.queue = new PQueue(queue);
-        let hashes = this.hashmap[queue].map((h) => this.hashs[h]) || [0];
-        this.board = new Board(hashes[randInt(0, this.hashs.length - 1)]);
+        let hashes = this.hashmap[queue].map((h) => this.hashes[h]) || [0];
+        this.board = new Board(hashes[randInt(0, hashes.length - 1)]);
     }
 
     calc_queues(patterns) {
         let queues = new Set();
-        this.hashs = [];
+        this.hashes = [];
         let cur_hashes = new Set();
         let hash_map = {};
         let used = false;
         for (const pattern of patterns.split("\n")) {
             if (/^\d+$/.test(pattern)) {
-                this.hashs.push(BigInt(pattern));
+                this.hashes.push(BigInt(pattern));
                 if (!used) {
-                    cur_hashes.add(this.hashs.length - 1);
+                    cur_hashes.add(this.hashes.length - 1);
                 } else {
-                    cur_hashes = new Set([this.hashs.length - 1]);
+                    cur_hashes = new Set([this.hashes.length - 1]);
                     used = false;
                 }
                 continue;
