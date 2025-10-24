@@ -1,0 +1,75 @@
+:root {
+  --line-color: #fff;
+  --line-width: 0.1em;
+  --spacing: 0.5em;
+}
+
+.node {
+  background: #4c566a;
+  border: solid var(--line-width) var(--line-color);
+  position: relative;
+  padding: 0.4em 1em;
+}
+
+.tree {
+  margin: 0 0 calc(var(--spacing) * 2);
+  text-align: center;
+  &,
+  & ul,
+  & li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    position: relative;
+  }
+  &,
+  & ul {
+    display: table;
+  }
+  & ul {
+    width: 100%;
+  }
+  & li {
+    display: table-cell;
+    padding: var(--spacing) 0;
+    vertical-align: top;
+  }
+  & li:before {
+    content: "";
+    left: 0;
+    outline: solid calc(var(--line-width) / 2) var(--line-color);
+    position: absolute;
+    right: 0;
+    top: 0;
+  }
+  & li:first-child:before {
+    left: 50%;
+  }
+  & li:last-child:before {
+    right: 50%;
+  }
+  & .node {
+    border-radius: 0.2em;
+    margin: 0 calc(var(--spacing) / 2) var(--spacing);
+    min-height: 2.1em;
+    position: relative;
+    z-index: 1;
+  }
+  & ul:before,
+  & .node:before {
+    outline: solid calc(var(--line-width) / 2) var(--line-color);
+    content: "";
+    height: var(--spacing);
+    left: 50%;
+    position: absolute;
+    top: calc(calc(-1 * var(--spacing)) - calc(var(--line-width) / 2));
+  }
+  & > li {
+    margin-top: 0;
+  }
+  & > li:before,
+  & > li:after,
+  & > li > .node:before {
+    outline: none;
+  }
+}
