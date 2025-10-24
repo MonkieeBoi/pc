@@ -79,6 +79,8 @@ class Game {
             this.hashmap[queue] = [...hashes];
         }
 
+        queues.delete("");
+
         this.queues = [...queues];
     }
 

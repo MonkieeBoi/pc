@@ -22,5 +22,6 @@
     --alt-bg: var(--nord02);
     --text: white;
     --border: var(--nord05);
+    --error: var(--nord11);
 }
 

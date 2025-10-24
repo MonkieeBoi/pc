@@ -115,6 +115,10 @@ button {
   font-family: "Courier New", Courier, monospace;
 }
 
+.invalid {
+  border: 2px solid var(--error) !important;
+}
+
 table,
 tr,
 td,

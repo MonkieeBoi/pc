@@ -45,15 +45,24 @@ function main() {
     init_input(input, game);
 
     document.getElementById("generate_button").onclick = () => {
-        game = new Game(patterns.innerText.toUpperCase());
+        try {
+            game = new Game(patterns.innerText.toUpperCase());
+            patterns.classList.remove("invalid")
+        } catch (error) {
+            patterns.classList.add("invalid")
+        }
     };
 
     requestAnimationFrame(frame);
     function frame(timestamp) {
-        game.tick(timestamp, input.read());
-        draw_hold(hold_context, game.hold_piece);
-        draw_queue(queue_context, game.queue);
-        draw_game(board_context, game);
+        try {
+            game.tick(timestamp, input.read());
+            draw_hold(hold_context, game.hold_piece);
+            draw_queue(queue_context, game.queue);
+            draw_game(board_context, game);
+        } catch (error) {
+            console.log(error);
+        }
         requestAnimationFrame(frame);
     }
 }
@@ -103,10 +112,11 @@ function init_input(input, game) {
     }
     window.addEventListener("keydown", (event) => {
         let url = new URL(location.href.replace(location.hash, ""));
-        url.hash = document.getElementById("patterns").innerText.replaceAll(
-            "\n",
-            ",",
-        ).replaceAll("^", "~");
+        url.hash = document.getElementById("patterns").innerText.trim()
+            .replaceAll(
+                "\n",
+                ",",
+            ).replaceAll("^", "~");
         if (event.key == "y") {
             navigator.clipboard.writeText(url.href);
         }
