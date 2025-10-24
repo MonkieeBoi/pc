@@ -101,11 +101,11 @@ function add(parent, rev, prev_hash, data) {
     if (hash == -1) {
         node_div.innerText = "💀";
     } else if (rev == -1) {
-        node_div.innerText = display_hash(hash) + "\n-" + score;
+        node_div.innerText = display_hash(hash) + "\n" + -score;
     } else {
         node_div.innerText = `rev: ${piece_name[rev]}\n${
             display_hash(hash)
-        }\n${score}`;
+        }\n${-score}`;
     }
 
     node_li.appendChild(node_div);
