@@ -1,4 +1,5 @@
 const piece_name = ["I", "J", "L", "O", "S", "T", "Z"];
+const pconv = [2, 3, 4, 5, 6, 1, 7, 0, 8];
 
 function load_data(url) {
     return new Promise((resolve, reject) => {
@@ -21,51 +22,76 @@ function load_data(url) {
     });
 }
 
-function display_hash(hash) {
-    hash = BigInt(hash);
-    const field = Array.from(
-        { length: 4 },
-        () => Array.from({ length: 10 }, () => []).fill(0),
-    );
-    let x = 9;
-    let y = 3;
-    while (hash != 0n) {
-        if (hash & 1n) {
-            field[y][x] = 1;
+function interpolate(prev, cur, piece) {
+    const pf = new Field(prev);
+    const p = new Piece(piece);
+    cur = BigInt(cur);
+    for (let x = 0; x < BOARD_WIDTH; x++) {
+        p.x = x;
+        for (let y = 0; y < 4; y++) {
+            p.y = y;
+            for (let r = 0; r < 4; r++) {
+                p.rotation = r;
+                if (pf.collides(p)) {
+                    continue;
+                }
+                let f = new Field(prev);
+                f.place(p);
+                f.clear_lines();
+                // console.log(f.cells);
+                // console.log(f.get_hash(), cur);
+                if (f.get_hash() == cur) {
+                    return p;
+                }
+            }
         }
-
-        x--;
-        if (x == -1) {
-            x = 10 - 1;
-            y--;
-        }
-        hash >>= 1n;
     }
-    return field.map((row) => row.join("")).join("\n").replaceAll("0", "⬛")
-        .replaceAll("1", "⬜");
+    return null;
+}
+
+function add_content(container, rev, prev_hash, hash, piece, score) {
+    if (hash == -1) {
+        container.innerText = "💀";
+        return;
+    }
+    if (rev != -1) {
+        container.innerText = `rev: ${piece_name[rev]}\n`;
+    }
+    let p = interpolate(prev_hash, hash, pconv[piece]);
+    let field = new Field(prev_hash);
+    if (p != null) {
+        field.place(p);
+    }
+    container.insertAdjacentHTML(
+        "beforeend",
+        field.html(),
+    );
+    if (score != undefined) {
+        container.append("\n" + -score);
+    }
 }
 
 function add_solve(parent, rev, prev_hash, data) {
-    for (let i = 1; i < 6; i++) {
-        hash = data[i][0];
+    for (let i = 1; i < 7; i++) {
+        let hash = data[i][0];
+        let piece = data[i][1];
         const node_li = document.createElement("li");
 
         const node_div = document.createElement("button");
         const next_ul = document.createElement("ul");
 
         node_div.classList.add("node");
-        if (i == 1) {
-            node_div.innerText = `rev: ${piece_name[rev]}\n` +
-                display_hash(hash);
-        } else {
-            node_div.innerText = display_hash(hash);
-        }
+        add_content(node_div, rev, prev_hash, hash, piece);
 
         node_li.appendChild(node_div);
         parent.appendChild(node_li);
 
-        if (i < 5) node_li.appendChild(next_ul);
+        if (i < 6) node_li.appendChild(next_ul);
         parent = next_ul;
+        prev_hash = hash;
+        if (i == 1) {
+            rev = -1;
+        }
     }
 }
 
@@ -80,13 +106,16 @@ function add(parent, rev, prev_hash, data) {
     let [hash, piece, score, next] = data;
     const node_li = document.createElement("li");
 
-    const node_div = document.createElement("button");
+    const node_content = document.createElement("button");
     const next_ul = document.createElement("ul");
     if (prev_hash != 0) {
         next_ul.classList.add("hidden");
     }
 
-    node_div.onclick = (e) => {
+    node_content.classList.add("node");
+    add_content(node_content, rev, prev_hash, hash, piece, score);
+
+    node_content.onclick = (e) => {
         next_ul.classList.toggle("hidden");
         const elem = e.currentTarget;
 
@@ -97,18 +126,7 @@ function add(parent, rev, prev_hash, data) {
         });
     };
 
-    node_div.classList.add("node");
-    if (hash == -1) {
-        node_div.innerText = "💀";
-    } else if (rev == -1) {
-        node_div.innerText = display_hash(hash) + "\n" + -score;
-    } else {
-        node_div.innerText = `rev: ${piece_name[rev]}\n${
-            display_hash(hash)
-        }\n${-score}`;
-    }
-
-    node_li.appendChild(node_div);
+    node_li.appendChild(node_content);
     parent.appendChild(node_li);
 
     if (hash == -1) {
@@ -132,7 +150,8 @@ async function main() {
         const { init_hash, data } = await load_data(`./data/${queue}.js`);
         add(root, -1, init_hash, data);
     } catch (error) {
-        while (true) {
+        console.log(error);
+        for (let i = 0; i < 100; i++) {
             try {
                 const { init_hash, data } = await load_data(
                     `./data/${prompt("queue", "TIJLOSZ")}.js`,
@@ -140,6 +159,7 @@ async function main() {
                 add(root, -1, init_hash, data);
                 break;
             } catch (error) {
+                console.log(error);
             }
         }
     }
