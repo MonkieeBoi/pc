@@ -25,7 +25,6 @@ function load_data(url) {
 function interpolate(prev, cur, piece) {
     const pf = new Field(prev);
     const p = new Piece(piece);
-    cur = BigInt(cur);
     for (let x = 0; x < BOARD_WIDTH; x++) {
         p.x = x;
         for (let y = 0; y < 4; y++) {
@@ -38,8 +37,6 @@ function interpolate(prev, cur, piece) {
                 let f = new Field(prev);
                 f.place(p);
                 f.clear_lines();
-                // console.log(f.cells);
-                // console.log(f.get_hash(), cur);
                 if (f.get_hash() == cur) {
                     return p;
                 }
@@ -55,7 +52,9 @@ function add_content(container, rev, prev_hash, hash, piece, score) {
         return;
     }
     if (rev != -1) {
-        container.innerText = `rev: ${piece_name[rev]}\n`;
+        container.innerHTML = `<span class="${piece_name[rev]}">${
+            piece_name[rev]
+        }</span><br>`;
     }
     let p = interpolate(prev_hash, hash, pconv[piece]);
     let field = new Field(prev_hash);
@@ -72,48 +71,63 @@ function add_content(container, rev, prev_hash, hash, piece, score) {
 }
 
 function add_solve(parent, rev, prev_hash, data) {
+    let field = new Field(prev_hash);
+    field.clear_lines();
     for (let i = 1; i < 7; i++) {
         let hash = data[i][0];
         let piece = data[i][1];
-        const node_li = document.createElement("li");
-
-        const node_div = document.createElement("button");
-        const next_ul = document.createElement("ul");
-
-        node_div.classList.add("node");
-        add_content(node_div, rev, prev_hash, hash, piece);
-
-        node_li.appendChild(node_div);
-        parent.appendChild(node_li);
-
-        if (i < 6) node_li.appendChild(next_ul);
-        parent = next_ul;
-        prev_hash = hash;
-        if (i == 1) {
-            rev = -1;
+        if (field.get_hash() != prev_hash) {
+            throw new Error("Hash mismatch");
         }
+        let p = interpolate(prev_hash, hash, pconv[piece]);
+        field.place(p);
+        field.clear_lines();
+        prev_hash = hash;
     }
+    const node_li = document.createElement("li");
+
+    const node_content = document.createElement("button");
+
+    node_content.classList.add("node");
+    node_content.innerHTML = `<span class="${piece_name[rev]}">${
+        piece_name[rev]
+    }</span><br>`;
+    node_content.insertAdjacentHTML(
+        "beforeend",
+        field.full_html(),
+    );
+
+    node_li.appendChild(node_content);
+    parent.appendChild(node_li);
 }
 
 function add(parent, rev, prev_hash, data) {
     if (data == null) {
-        return false;
+        return;
     }
     if (data.length == 7) {
         add_solve(parent, rev, prev_hash, data);
-        return true;
+        return;
     }
     let [hash, piece, score, next] = data;
     const node_li = document.createElement("li");
 
     const node_content = document.createElement("button");
+
+    node_content.classList.add("node");
+    add_content(node_content, rev, prev_hash, hash, piece, score);
+
+    node_li.appendChild(node_content);
+    parent.appendChild(node_li);
+
+    if (hash == -1) {
+        return;
+    }
+
     const next_ul = document.createElement("ul");
     if (prev_hash != 0) {
         next_ul.classList.add("hidden");
     }
-
-    node_content.classList.add("node");
-    add_content(node_content, rev, prev_hash, hash, piece, score);
 
     node_content.onclick = (e) => {
         next_ul.classList.toggle("hidden");
@@ -126,43 +140,42 @@ function add(parent, rev, prev_hash, data) {
         });
     };
 
-    node_li.appendChild(node_content);
-    parent.appendChild(node_li);
-
-    if (hash == -1) {
-        return false;
-    }
-
-    let not_leaf = false;
+    node_li.appendChild(next_ul);
     for (let i = 0; i < 7; i++) {
-        not_leaf = add(next_ul, i, hash, next[i]) || not_leaf;
+        add(next_ul, i, hash, next[i]);
     }
-    if (not_leaf) {
-        node_li.appendChild(next_ul);
-    }
-    return true;
 }
 
 async function main() {
-    const queue = location.hash.substring(1);
+    let queue = location.hash.substring(1).toUpperCase();
     const root = document.querySelector(".tree");
+    let ih, da;
     try {
+        if (queue.length != 7) {
+            throw new Error("Invalid queue in hash");
+        }
         const { init_hash, data } = await load_data(`./data/${queue}.js`);
-        add(root, -1, init_hash, data);
+        ih = init_hash;
+        da = data;
     } catch (error) {
         console.log(error);
         for (let i = 0; i < 100; i++) {
             try {
+                queue = prompt("queue", "TIJLOSZ").toUpperCase();
                 const { init_hash, data } = await load_data(
-                    `./data/${prompt("queue", "TIJLOSZ")}.js`,
+                    `./data/${queue}.js`,
                 );
-                add(root, -1, init_hash, data);
+                ih = init_hash;
+                da = data;
                 break;
             } catch (error) {
                 console.log(error);
             }
+            return;
         }
     }
+    document.title += " " + queue;
+    add(root, -1, ih, da);
 }
 
 window.addEventListener("load", main);
