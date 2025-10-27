@@ -20,6 +20,11 @@
   padding: 0.4em 1em;
 }
 
+.node:focus-visible {
+  outline: none;
+  border: solid var(--line-width) var(--nord09);
+}
+
 .tree {
   margin: 0 0 calc(var(--spacing) * 2);
   text-align: center;

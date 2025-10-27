@@ -176,6 +176,25 @@ async function main() {
     }
     document.title += " " + queue;
     add(root, -1, ih, da);
+    document.addEventListener("keydown", (e) => {
+        const active = document.activeElement;
+        if (!active.classList.contains("node")) {
+            return;
+        }
+        let key = e.key.toUpperCase();
+        try {
+            if (key == "BACKSPACE") {
+                active.parentNode.parentNode.parentNode.children[0].focus();
+            }
+            for (let child of active.parentNode.children[1].children) {
+                if (child.children[0].children[0].innerText == key) {
+                    child.children[0].focus();
+                    child.children[0].click();
+                }
+            }
+        } catch (e) {
+        }
+    });
 }
 
 window.addEventListener("load", main);
