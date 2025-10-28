@@ -48,7 +48,9 @@ function interpolate(prev, cur, piece) {
 
 function add_content(container, rev, prev_hash, hash, piece, score) {
     if (hash == -1) {
-        container.innerText = "💀";
+        container.innerHTML = `<span class="${piece_name[rev]}">${
+            piece_name[rev]
+        }</span><br>💀`;
         return;
     }
     if (rev != -1) {
