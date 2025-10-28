@@ -187,6 +187,7 @@ async function main() {
         try {
             if (key == "BACKSPACE") {
                 active.parentNode.parentNode.parentNode.children[0].focus();
+                active.click();
             }
             for (let child of active.parentNode.children[1].children) {
                 if (child.children[0].children[0].innerText == key) {
