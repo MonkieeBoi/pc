@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>PC</title>
+    <link rel="icon" href="./favicon.ico" />
+    <link href="css/style.css" rel="stylesheet" />
+    <script src="js/util.js"></script>
+    <script src="js/tables.js"></script>
+    <script src="js/piece.js"></script>
+    <script src="js/expandregex.js"></script>
+    <script src="js/queue.js"></script>
+    <script src="js/board.js"></script>
+    <script src="js/game.js"></script>
+    <script src="js/input.js"></script>
+    <script src="js/main.js"></script>
+  </head>
+  <body>
+    <noscript>no JS :stare:</noscript>
+    <header>
+      <img id="logo" src="./favicon.ico" />
+      <nav>
+        <ul class="nav-links">
+          <!-- <li><a href="#">Home</a></li> -->
+        </ul>
+      </nav>
+      <button
+        id="toggle_settings"
+        onclick="document.querySelector('#settings-modal').classList.toggle('hidden')"
+      >
+        <img class="icon" src="images/icons/settings.svg" />
+      </button>
+    </header>
+    <div id="content">
+      <div id="dummy_left"></div>
+      <div id="game" tabindex="1">
+        <canvas id="hold"></canvas>
+        <canvas id="board"></canvas>
+        <canvas id="queue"></canvas>
+      </div>
+      <div style="display:none" id="queue_patterns">
+        <p id="patterns" contenteditable="plaintext-only"></p>
+        <button id="generate_button">Generate</button>
+      </div>
+    </div>
+    <div
+      id="settings-modal"
+      class="hidden"
+      onclick="document.querySelector('#settings-modal').classList.toggle('hidden')"
+    >
+      <div id="settings" onclick="event.stopPropagation()">
+        <h3>Keybinds</h3>
+        <table id="keybinds"></table>
+        <h3>Tunings</h3>
+        <table id="tunings"></table>
+      </div>
+    </div>
+    <script>
+      main();
+    </script>
+  </body>
+</html>
