@@ -10,6 +10,7 @@ class Game {
 
         this.queue = new Queue();
         this.board = new Board();
+        patterns = "*!*p4"
         if (patterns != undefined && patterns.length > 0) {
             this.calc_queues(patterns);
             if (this.queues.length > 0) {
@@ -40,15 +41,13 @@ class Game {
         }
         this.active = this.queue.pop();
 
-        let queueStr = [this.active.type, ...this.queue.preview()].slice(0,7).map(t=>"XTIJLOSZ"[t]).join("");
-        load_data(`./data/${queueStr}.js`).then(result => {
-            this.ih = result.init_hash
-            this.data = result.data
+        let queueStr = [this.hold_piece, this.active.type, ...this.queue.preview()].slice(0, 7)
+            .map((t) => "XTIJLOSZ"[t]).join("");
+        load_data(`../data/${queueStr}.js`).then((result) => {
+            this.ih = result.init_hash;
+            this.data = result.data;
             console.log("1st queue: " + queueStr);
-            
-        })
-
-        
+        });
     }
 
     regen() {
@@ -209,7 +208,7 @@ class Game {
 
     lock() {
         console.log(`used piece: ${this.active.type}`);
-        
+
         this.move_piece_y(-1, BOARD_HEIGHT * 2);
         this.held = false;
         for (let [x, y] of this.active.get_cells()) {
@@ -238,34 +237,30 @@ class Game {
             this.reset();
         }
 
-        if(this.data[3].filter(x=>x).length < 4){
+        if (this.data[3].filter((x) => x).length < 4) {
             //todo: reset on use saved piece
             //console.log("solve time :DD");
-            
+
             return;
         }
-        
-        if(this.data[0] != boardToHash(this.board)){
+
+        if (this.data[0] != boardToHash(this.board)) {
             //DIE
 
-            console.error(`Expected field hash: ` + this.data[0] + ` but got ` + boardToHash(this.board));
+            console.error(
+                `Expected field hash: ` + this.data[0] + ` but got ` +
+                    boardToHash(this.board),
+            );
             this.reset();
-            
-            
         }
-        
-        let revealed = this.queue.preview()[4 + (this.hold_piece?0:1)];
+
+        let revealed = this.queue.preview()[4 + (this.hold_piece ? 0 : 1)];
         console.log(`revealed ${"XTIJLOSZ"[revealed]}`);
-        let hydraIndex = [-1,5,0,1,2,3,4,6][revealed]
+        let hydraIndex = [-1, 5, 0, 1, 2, 3, 4, 6][revealed];
         console.log(this.data);
-        
+
         this.ih = this.data[0];
         this.data = this.data[3][hydraIndex];
-        
-        
-        
-        
-        
     }
 
     tick(time, actions) {
