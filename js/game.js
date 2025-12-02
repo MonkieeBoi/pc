@@ -194,6 +194,10 @@ class Game {
         this.spin(spin_180(this.active.rotation));
     }
 
+    down() {
+        this.move_piece_y(-1, 1);
+    }
+
     lock() {
         this.move_piece_y(-1, BOARD_HEIGHT * 2);
         this.held = false;
@@ -246,6 +250,9 @@ class Game {
                     break;
                 case "hd":
                     this.lock();
+                    break;
+                case "d1":
+                    this.down();
                     break;
                 case "reset":
                     this.reset();

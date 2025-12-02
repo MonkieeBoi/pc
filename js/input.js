@@ -1,14 +1,15 @@
 class Input {
     constructor(focus_element) {
         this.keymap = {
-            "KeyC": "hold",
-            "KeyZ": "ccw",
-            "ArrowUp": "cw",
-            "KeyA": "180",
+            "ShiftLeft": "hold",
+            "KeyA": "ccw",
+            "KeyS": "cw",
+            "KeyD": "180",
             "ArrowLeft": "l",
             "ArrowRight": "r",
             "ArrowDown": "sd",
             "Space": "hd",
+            "KeyH": "d1",
             "KeyR": "reset",
         };
         this.rev_keymap = {};
