@@ -47,9 +47,10 @@ function main() {
     document.getElementById("generate_button").onclick = () => {
         try {
             game = new Game(patterns.innerText.toUpperCase());
-            patterns.classList.remove("invalid")
+            patterns.classList.remove("invalid");
         } catch (error) {
-            patterns.classList.add("invalid")
+            patterns.classList.add("invalid");
+            console.log(error);
         }
     };
 

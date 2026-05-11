@@ -203,3 +203,75 @@ function cartesianProduct(arrays) {
         return result;
     }, new Set([""]));
 }
+
+function randomPieces(input) {
+    input = normalizeInput(input);
+    const parts = [];
+
+    if (input.split("").every((c) => PIECES.includes(c))) {
+        return input;
+    }
+
+    let i = 0;
+    while (i < input.length) {
+        const char = input[i];
+        if (char === "[") {
+            const [bagContent, nextIndex] = extractBracketedBlock(input, i);
+            i = nextIndex;
+
+            const mode = input[i];
+            i++;
+
+            let numStr = "";
+            while (/\d/.test(input[i])) {
+                numStr += input[i++];
+            }
+            const num = Number(numStr);
+
+            const expandedBag = pieces(bagContent);
+            let pool;
+            if (mode === "p") {
+                pool = [...getPermutations(expandedBag, num)];
+            } else if (mode === "c") {
+                pool = [...getCombinations(expandedBag, num)];
+            }
+            parts.push(pool[Math.floor(Math.random() * pool.length)]);
+        } else if (PIECES.includes(char)) {
+            parts.push(char);
+            i++;
+        } else {
+            i++;
+        }
+    }
+
+    return parts.join("");
+}
+
+function piecesSize(input) {
+    input = normalizeInput(input);
+    let res = 1;
+
+    if (input.split("").every((c) => PIECES.includes(c))) {
+        return res;
+    }
+
+    let i = 0;
+    while (i < input.length) {
+        const char = input[i];
+        if (char === "[") {
+            const nextIndex = extractBracketedBlock(input, i)[1];
+            i = nextIndex + 1;
+
+            let numStr = "";
+            while (/\d/.test(input[i])) {
+                numStr += input[i++];
+            }
+            const num = Number(numStr);
+            res *= num;
+        } else {
+            i++;
+        }
+    }
+
+    return res;
+}

@@ -9,7 +9,7 @@ class Game {
         this.board = new Board();
         if (patterns != undefined && patterns.length > 0) {
             this.calc_queues(patterns);
-            if (this.queues.length > 0) {
+            if (this.queue_patterns.length > 0) {
                 this.regen();
                 this.is_prac = true;
             }
@@ -30,7 +30,7 @@ class Game {
         this.queue.reset();
         this.board.reset();
         if (
-            this.queues != undefined && this.queues.length > 0 &&
+            this.queue_patterns != undefined && this.queue_patterns.length > 0 &&
             this.queue.preview().length > 1
         ) {
             this.hold_piece = this.queue.pop().type;
@@ -39,20 +39,32 @@ class Game {
     }
 
     regen() {
-        let queue = this.queues[randInt(0, this.queues.length - 1)];
-        this.queue = new PQueue(queue);
-        let hashes = this.hashmap[queue].map((h) => this.hashes[h]) || [0];
+        let pattern_index = randInt(0, this.queue_patterns.length - 1)
+
+        let queue_pattern = this.queue_patterns[pattern_index];
+        this.queue = new PQueue(randomPieces(queue_pattern));
+
+        let hashes = this.hash_map[pattern_index].map((h) => this.hashes[h]) || [0];
         this.board = new Board(hashes[randInt(0, hashes.length - 1)]);
     }
 
     calc_queues(patterns) {
-        let queues = new Set();
-        this.hashes = [];
-        let cur_hashes = new Set();
-        let hash_map = {};
+        this.hashes = [0];
+        this.hash_map = [];
+        this.queue_patterns = [];
+        this.pattern_sizes = [];
+
+        let cur_hashes = new Set([0]);
         let used = false;
+
         for (const pattern of patterns.split("\n")) {
+            if (!pattern) { continue; }
+
             if (/^\d+$/.test(pattern)) {
+                if (!used && this.hashes[0] === 0) {
+                    this.hashes.length = 0;
+                    cur_hashes.clear();
+                }
                 this.hashes.push(BigInt(pattern));
                 if (!used) {
                     cur_hashes.add(this.hashes.length - 1);
@@ -63,25 +75,10 @@ class Game {
                 continue;
             }
             used = true;
-            for (const q of pieces(pattern)) {
-                queues.add(q);
-                if (!hash_map.hasOwnProperty(q)) {
-                    hash_map[q] = new Set();
-                }
-                for (const h of cur_hashes) {
-                    hash_map[q].add(h);
-                }
-            }
+            this.queue_patterns.push(pattern);
+            this.pattern_sizes.push((this.pattern_sizes.at(-1) || 0) + piecesSize(pattern));
+            this.hash_map.push([...cur_hashes]);
         }
-
-        this.hashmap = {};
-        for (const [queue, hashes] of Object.entries(hash_map)) {
-            this.hashmap[queue] = [...hashes];
-        }
-
-        queues.delete("");
-
-        this.queues = [...queues];
     }
 
     check_collide(piece, cx, cy, rotation) {
