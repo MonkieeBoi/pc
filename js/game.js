@@ -39,7 +39,8 @@ class Game {
     }
 
     regen() {
-        let pattern_index = randInt(0, this.queue_patterns.length - 1)
+        let pattern_number = randInt(1, this.pattern_sizes.at(-1) || 0);
+        let pattern_index = Math.max(0, this.pattern_sizes.findIndex(x => x >= pattern_number));
 
         let queue_pattern = this.queue_patterns[pattern_index];
         this.queue = new PQueue(randomPieces(queue_pattern));

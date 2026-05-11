@@ -247,6 +247,28 @@ function randomPieces(input) {
     return parts.join("");
 }
 
+function permutations(n, r) {
+    if (r > n || r < 0) return 0;
+    let res = 1;
+    for (let i = 0; i < r; i++) {
+        res *= n - i;
+    }
+    return res;
+}
+
+function combinations(n, r) {
+    if (r > n || r < 0) return 0;
+    if (r === 0 || r === n) return 1;
+
+    if (r > n / 2) r = n - r;
+
+    let res = 1;
+    for (let i = 1; i <= r; i++) {
+        res = res * (n - i + 1) / i;
+    }
+    return Math.round(res);
+}
+
 function piecesSize(input) {
     input = normalizeInput(input);
     let res = 1;
@@ -259,15 +281,18 @@ function piecesSize(input) {
     while (i < input.length) {
         const char = input[i];
         if (char === "[") {
-            const nextIndex = extractBracketedBlock(input, i)[1];
-            i = nextIndex + 1;
+            const [bagContent, nextIndex] = extractBracketedBlock(input, i);
+            i = nextIndex;
+
+            const mode = input[i];
+            i++;
 
             let numStr = "";
             while (/\d/.test(input[i])) {
                 numStr += input[i++];
             }
             const num = Number(numStr);
-            res *= num;
+            res *= mode == 'C' ? combinations(bagContent.length, num) : permutations(bagContent.length, num);
         } else {
             i++;
         }
