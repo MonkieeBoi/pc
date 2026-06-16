@@ -35,7 +35,7 @@ class Field {
                 continue;
             }
             if (this.cleared.hasOwnProperty(row + shift)) {
-                throw new Error("???");
+                shift++;
             }
             this.cleared[row + shift] = this.cells[row];
             if (m < row + shift) {
